@@ -57,7 +57,7 @@ module fcc_executer #(
     
     input                          i_keep_wait, // keep in WAIT state    
     output reg [1:0]               o_status,
-     
+    output reg [7:0]               o_sr,
 
     //read signal
     input                          i_rready, // has enough available space, not handshake
@@ -148,7 +148,7 @@ wire  [15 : 0]               o3_rd_st_id;
 reg                          inside_rd_st; // inside read status
 //res
 wire                         o_cmd_ack;
-wire  [ 7 : 0]               o_sr;
+
 wire  [15 : 0]               o_cmd_id;
 
 wire  [ 1 : 0]               o1_status;

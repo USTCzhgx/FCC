@@ -6,7 +6,11 @@
 // Author: SCMI ZGX
 //description:a simple register file module
 ////////////////////////////////////////////////////////////////////////////////
-
+// o_status [1:0]
+//    2'b00 : IDLE
+//    2'b01 : BUSY (DQ bus busy)
+//    2'b10 : WAIT (wait RB_n ready)
+//    2'b11 : READY (RB_n ready)
 /*
 2025.12.7 SCMI ZGX
 update the code
@@ -51,7 +55,10 @@ module regfile #(
     output [47:0]                   nfc_lba,
     output [23:0]                   nfc_len,
     output [15:0]                   nfc_opcode,
-    output                          nfc_valid
+    output                          nfc_valid,
+
+    input [7:0]                   o_sr_0,
+    input [1:0]                   o_status_0
 );
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -217,6 +224,14 @@ assign nfc_opcode = slv_reg[0][15:0];
 assign nfc_len = slv_reg[1][23:0]; 
 assign nfc_lba = {slv_reg[3][15:0], slv_reg[2][31:0]};
 
+
+always @(posedge S_AXI_ACLK) begin
+    if(~S_AXI_ARESETN) begin
+        slv_reg[5][9:0] <= 10'd0;
+    end else begin
+        slv_reg[5][9:0] <= {o_status_0, o_sr_0};
+    end
+end
 
 
 // nfc_valid pulse: write reg3 bit0 = 1 raise 1 cycle

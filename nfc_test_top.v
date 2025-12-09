@@ -106,6 +106,9 @@ module nfc_test_top #(
     wire                   nand_usr_clk;   // NAND user clock (50MHz)
     wire                   refclk;         // Reference clock (200MHz)
 
+    wire  [7:0]            o_sr;
+    wire  [1:0]            o_status_0;
+
 // ============================================================================
 // Clock and Reset Buffers
 // ============================================================================
@@ -144,7 +147,7 @@ module nfc_test_top #(
         .S_AXI_ARESETN   (s_axil_aresetn),
         
         .S_AXI_AWADDR    (axil_awaddr),
-//        .S_AXI_AWPROT    (axil_awprot),
+//      .S_AXI_AWPROT    (axil_awprot),
         .S_AXI_AWVALID   (axil_awvalid),
         .S_AXI_AWREADY   (axil_awready),
         
@@ -158,7 +161,7 @@ module nfc_test_top #(
         .S_AXI_BREADY    (axil_bready),
         
         .S_AXI_ARADDR    (axil_araddr),
-//        .S_AXI_ARPROT    (axil_arprot),
+//      .S_AXI_ARPROT    (axil_arprot),
         .S_AXI_ARVALID   (axil_arvalid),
         .S_AXI_ARREADY   (axil_arready),
         
@@ -170,7 +173,10 @@ module nfc_test_top #(
         .nfc_opcode      (gen_opc),
         .nfc_lba         (gen_lba),
         .nfc_len         (gen_len),
-        .nfc_valid       (gen_valid)
+        .nfc_valid       (gen_valid),
+        
+        .o_sr_0          (o_sr_0),
+        .o_status_0      (o_status_0)
     );
 
 // ============================================================================
@@ -198,6 +204,10 @@ module nfc_test_top #(
         .i_opc          (gen_opc),
         .i_lba          (gen_lba),
         .i_len          (gen_len),
+
+        .o_sr_0         (o_sr_0),
+        .o_status_0     (o_status_0),
+
 
         // AXI Stream Write Interface
         .axis_wvalid_0  (s_axis_tvalid),
