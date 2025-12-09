@@ -173,10 +173,10 @@ module nfc_test_top #(
         .nfc_opcode      (gen_opc),
         .nfc_lba         (gen_lba),
         .nfc_len         (gen_len),
-        .nfc_valid       (gen_valid),
+        .nfc_valid       (gen_valid)
         
-        .o_sr_0          (o_sr_0),
-        .o_status_0      (o_status_0)
+//        .o_sr_0          (o_sr_0),
+//        .o_status_0      (o_status_0)
     );
 
 // ============================================================================
@@ -205,8 +205,8 @@ module nfc_test_top #(
         .i_lba          (gen_lba),
         .i_len          (gen_len),
 
-        .o_sr_0         (o_sr_0),
-        .o_status_0     (o_status_0),
+//        .o_sr_0         (o_sr_0),
+//        .o_status_0     (o_status_0),
 
 
         // AXI Stream Write Interface

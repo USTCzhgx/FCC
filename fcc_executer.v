@@ -57,7 +57,7 @@ module fcc_executer #(
     
     input                          i_keep_wait, // keep in WAIT state    
     output reg [1:0]               o_status,
-    output reg [7:0]               o_sr,
+    output  [7:0]               o_sr_r,
 
     //read signal
     input                          i_rready, // has enough available space, not handshake
@@ -92,7 +92,7 @@ module fcc_executer #(
 
 
 // 50M    
-
+wire [7:0] o_sr;
 wire                         o0_cmd_ready;
 reg                          i0_cmd_valid;
 reg  [15 : 0]                i0_cmd_id;
@@ -475,7 +475,7 @@ phy_status phy_status(
 );
 
 assign o0_wp_n = 1'h1;
-
+assign o_sr_r = o_sr;
 
 
 phy_erase phy_erase(

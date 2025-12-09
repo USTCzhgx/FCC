@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 /*
 2025.11.13 SCMI ZGX 
-ɾ��ͨ��1-3�Ķ˿��������Ƴ�������ͨ��1��2��3������/����˿�
+ɾ��ͨ��1-3�Ķ˿��������Ƴ�������ͨ��1��2��3������/����˿�?
 ɾ��ͨ��1-3���ڲ��źţ��Ƴ�����ص�wire��reg����
 ɾ��ͨ��1-3��ʵ����
 �Ƴ��� fcc_scheduler_1, fcc_scheduler_2, fcc_scheduler_3
@@ -11,8 +11,8 @@
 ��ͨ��0�Ŀ����߼���
 ֱ������scheduler��executer
 i_page_cmd_valid_0 ֱ�Ӵ��� o_page_cmd_valid_0
-i_keep_wait_0 ʼ��Ϊ0������ȴ�����ͨ����
-��������ӿڣ�ֱ��ʹ��ͨ��0���ź����ӵ������㣬�����·ѡ��
+i_keep_wait_0 ʼ��Ϊ0������ȴ�����ͨ����?
+��������ӿڣ�ֱ��ʹ��ͨ��?0���ź����ӵ������㣬�����·ѡ��?
 ģ����ת��Ϊ��ͨ���汾��������ͨ��0�Ĺ��ܡ�
 */
 
@@ -31,8 +31,8 @@ module fcc_core #(
     input                          usr_clk,    // 50M
     input                          ref_clk,    // reference clock for IDELAYCTRL
 
-    output reg [7:0]               o_sr_0,
-    output [1:0]                   o_status_0,
+//    output reg [7:0]               o_sr_0,
+//    output [1:0]                   o_status_0,
     output                         o_cmd_ready_0,
     input                          i_cmd_valid_0,
     input  [15 : 0]                i_cmd_0,
@@ -195,7 +195,7 @@ end else begin
     i_page_cmd_ready_0 <= 1'h0;
 end
 
-assign is_busy_0 = (o_status_0 == 2'h1);
+//assign is_busy_0 = (o_status_0 == 2'h1);
 
 // Single channel - directly connect scheduler to executer
 always@(posedge usr_clk or posedge usr_rst)    
@@ -240,8 +240,8 @@ fcc_executer fcc_executer_0(
     .i_cmd_param    (o_page_cmd_param_0), 
     .i_cmd_type     (o_page_cmd_type_0 ), 
     .i_keep_wait    (i_keep_wait_0     ),
-    .o_status       (o_status_0        ),                                   
-    .o_sr           (o_sr_0              ),
+//    .o_status       (o_status_0        ),                                   
+//    .o_sr_r           (o_sr_0              ),
     
     .i_rready       (i_rpage_buf_ready_0),
     .o_rvalid       (o_rvalid_0        ),                
