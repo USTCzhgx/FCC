@@ -27,8 +27,9 @@ module nfc_channel_test#(
     input  [47:0]                 i_lba, // logical block address 111
     input  [23:0]                 i_len, // transfer data length in bytes
 
-//    output reg [7:0]               o_sr_0,
-//    output [1:0]                   o_status_0,
+    output                        req_fifo_almost_full,
+    output  [7:0]               o_sr_0,
+    output [1:0]                   o_status_0,
 
     input  wire                        axis_wvalid_0,
     output wire                        axis_wready_0,
@@ -69,7 +70,6 @@ wire                         o_req_valid_0;
 wire [263:0]                 o_req_data_0;
 
 
-
     
 nfc_test #(
     .DATA_WIDTH(DATA_WIDTH)
@@ -100,8 +100,9 @@ fcc_top  #(
     .nand_usr_clk         (nand_usr_clk         ),
     .ref_clk              (ref_clk              ),
 
-//    .o_sr_0               (o_sr_0               ),
-//    .o_status_0           (o_status_0           ),
+    .req_fifo_almost_full (req_fifo_almost_full),
+    .o_sr_0               (o_sr_0               ),
+    .o_status_0           (o_status_0           ),
 
     .o_req_fifo_ready_0   (i_req_ready_0        ),
     .i_req_fifo_valid_0   (o_req_valid_0        ),
@@ -135,8 +136,7 @@ fcc_top  #(
     .IO_NAND_DQ           (IO_NAND_DQ           ) 
 );
     
-    
-    
+
     
     
     

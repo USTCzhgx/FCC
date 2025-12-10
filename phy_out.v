@@ -11,8 +11,7 @@ module phy_out #(
     input                       reset,
     input  [DATA_WIDTH - 1 : 0] data_from_fabric,
     inout                       data_to_pins_p,
-    inout                       data_to_pins_n,
-    output                      out_test
+    inout                       data_to_pins_n
     
 );
 
@@ -64,5 +63,4 @@ OSERDESE2 #(
     .TCE(1'b0)
 );
 
-assign out_test = iob_din;
 endmodule

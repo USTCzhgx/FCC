@@ -23,7 +23,7 @@ module fcc_wrapper#(
     input                         i_req_fifo_valid,
     input                 [263:0] i_req_fifo_data,
     
-
+    output                        req_fifo_almost_full,
     
     // write data fifo axi-stream interfaces
     output [23 : 0]               s_data_avail,  // availiable data number to write
@@ -33,9 +33,9 @@ module fcc_wrapper#(
     input                         s_axis_tlast, 
     
     // read data fifo axi-stream interfaces
-    input                         m_axis_tready,
-    output                        m_axis_tvalid,                        
-    output [  DATA_WIDTH - 1 : 0] m_axis_tdata,
+(* MARK_DEBUG="true" *)     input                         m_axis_tready,
+(* MARK_DEBUG="true" *)     output                        m_axis_tvalid,                        
+(* MARK_DEBUG="true" *)     output [  DATA_WIDTH - 1 : 0] m_axis_tdata,
     output [DATA_WIDTH/8 - 1 : 0] m_axis_tkeep,
     output                        m_axis_tlast,
     output               [15 : 0] m_axis_tid, 
@@ -114,7 +114,7 @@ assign o_len          = req_fifo_rdata[103:80];
 assign o_data         = req_fifo_rdata[167:104];
 assign o_col_addr_len = req_fifo_rdata[231:168];
 assign o_col_num      = req_fifo_rdata[239:232];
-
+assign req_fifo_almost_full = req_fifo_prog_full;
 
 always@(posedge nand_usr_clk or negedge nand_usr_rstn)
 if(~nand_usr_rstn) begin

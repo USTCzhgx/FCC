@@ -55,8 +55,9 @@ module fcc_top #(
     input                         i_req_fifo_valid_0,
     input                 [263:0] i_req_fifo_data_0,
     
-//    output reg [7:0]               o_sr_0,
-//    output [1:0]                   o_status_0,
+    output                        req_fifo_almost_full,
+    output [7:0]                  o_sr_0,
+    output [1:0]                  o_status_0,
     
     // write data fifo axi-stream interfaces
     output [23 : 0]               s_data_avail_0,  // availiable data number to write
@@ -118,7 +119,6 @@ wire [DATA_WIDTH_INTER-1 : 0] i_wdata_0;
 wire                          i_wlast_0;
 wire [23 : 0]                 i_wdata_avail_0;
 
-
 // #######################################################
 // fcc_wrapper providing:
 //   1. cross-clock-domain transfer
@@ -135,7 +135,8 @@ fcc_wrapper fcc_wrapper_0(
     .nand_usr_rstn      (nand_usr_rstn      ),  // input                         nand_usr_rstn    
     .o_req_fifo_ready   (o_req_fifo_ready_0 ),  // output                        o_req_fifo_ready             
     .i_req_fifo_valid   (i_req_fifo_valid_0 ),  // input                         i_req_fifo_valid     
-    .i_req_fifo_data    (i_req_fifo_data_0  ),  // input                 [255:0] i_req_fifo_data        
+    .i_req_fifo_data    (i_req_fifo_data_0  ),  // input                 [255:0] i_req_fifo_data     
+    .req_fifo_almost_full(req_fifo_almost_full),   
     .s_data_avail       (s_data_avail_0     ),  //  output [23 : 0]               s_data_avail       
     .s_axis_tready      (s_axis_tready_0    ),  // output                        s_axis_tready             
     .s_axis_tvalid      (s_axis_tvalid_0    ),  // input                         s_axis_tvalid                                 
@@ -190,8 +191,9 @@ fcc_core #(
     .usr_rst              (~nand_usr_rstn     ), 
     .ref_clk              (ref_clk            ),
 
-//    .o_sr_0               (o_sr_0             ),
-//    .o_status_0           (o_status_0         ),
+    .o_sr_0               (o_sr_0             ),
+    .o_status_0           (o_status_0         ),
+    
     .o_cmd_ready_0        (o_cmd_ready_0      ),          
     .i_cmd_valid_0        (i_cmd_valid_0      ),          
     .i_cmd_0              (i_cmd_0            ),    
@@ -226,7 +228,5 @@ fcc_core #(
 );    
     
     
-    
-    
-    
+      
 endmodule

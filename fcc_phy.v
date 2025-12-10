@@ -72,12 +72,6 @@ genvar i;
 (* MARK_DEBUG="true" *)     wire     out_sync_o_rb_n;
 (* MARK_DEBUG="true" *)     wire     dqs;
 
-(* MARK_DEBUG="true" *)     wire     O_NAND_CE_N_t;
-(* MARK_DEBUG="true" *)     wire     O_NAND_WE_N_t;
-(* MARK_DEBUG="true" *)     wire     O_NAND_CLE_t; 
-(* MARK_DEBUG="true" *)     wire     O_NAND_ALE_t; 
-(* MARK_DEBUG="true" *)     wire     O_NAND_WP_N_t;
-(* MARK_DEBUG="true" *)     wire     O_NAND_RE_P_t; 
 
 
 
@@ -229,9 +223,8 @@ generate for( i = 0; i < WAY_NUM; i = i + 1) begin : target
         .reset                  (clk_reset              ),
         .data_from_fabric       ({8{sync_i_ce_n[i]}}    ),
         .data_to_pins_p         (O_NAND_CE_N[i]         ),
-        .data_to_pins_n         (                       ),
-        .out_test               (O_NAND_CE_N_t)
-    ); 
+        .data_to_pins_n         (                       )
+            ); 
 end
 endgenerate
 
@@ -247,8 +240,8 @@ phy_out #(
     .reset                  (clk_reset              ),
     .data_from_fabric       ({8{sync_i_cle}}        ),
     .data_to_pins_p         (O_NAND_CLE             ),
-    .data_to_pins_n         (                       ),
-    .out_test               (O_NAND_CLE_t)
+    .data_to_pins_n         (                       )
+
 ); 
 
 phy_out #(
@@ -262,8 +255,8 @@ phy_out #(
     .reset                  (clk_reset              ),
     .data_from_fabric       ({8{sync_i_ale}}        ),
     .data_to_pins_p         (O_NAND_ALE             ),
-    .data_to_pins_n         (                       ),
-    .out_test                (O_NAND_ALE_t)
+    .data_to_pins_n         (                       )
+
 );  
 
 
@@ -278,8 +271,8 @@ phy_out #(
     .reset                  (clk_reset              ),
     .data_from_fabric       ({8{sync_i_we_n}}       ),
     .data_to_pins_p         (O_NAND_WE_N            ),
-    .data_to_pins_n         (                       ),
-    .out_test                (O_NAND_WE_N_t)
+    .data_to_pins_n         (                       )
+
 );  
 
 phy_out #(
@@ -293,8 +286,8 @@ phy_out #(
     .reset                  (clk_reset              ),
     .data_from_fabric       ({8{sync_i_wp_n}}       ),
     .data_to_pins_p         (O_NAND_WP_N            ),
-    .data_to_pins_n         (                       ),
-    .out_test                (O_NAND_WP_N_t)
+    .data_to_pins_n         (                       )
+
 );  
 
 

@@ -106,9 +106,9 @@ module nfc_test_top #(
     wire                   nand_usr_clk;   // NAND user clock (50MHz)
     wire                   refclk;         // Reference clock (200MHz)
 
-    wire  [7:0]            o_sr;
+    wire  [7:0]            o_sr_0;
     wire  [1:0]            o_status_0;
-
+    wire                   req_fifo_almost_full;
 // ============================================================================
 // Clock and Reset Buffers
 // ============================================================================
@@ -173,10 +173,11 @@ module nfc_test_top #(
         .nfc_opcode      (gen_opc),
         .nfc_lba         (gen_lba),
         .nfc_len         (gen_len),
-        .nfc_valid       (gen_valid)
+        .nfc_valid       (gen_valid),
         
-//        .o_sr_0          (o_sr_0),
-//        .o_status_0      (o_status_0)
+        .req_fifo_almost_full (req_fifo_almost_full),
+        .o_sr_0          (o_sr_0),
+        .o_status_0      (o_status_0)
     );
 
 // ============================================================================
@@ -205,8 +206,9 @@ module nfc_test_top #(
         .i_lba          (gen_lba),
         .i_len          (gen_len),
 
-//        .o_sr_0         (o_sr_0),
-//        .o_status_0     (o_status_0),
+        .req_fifo_almost_full (req_fifo_almost_full),
+        .o_sr_0         (o_sr_0),
+        .o_status_0     (o_status_0),
 
 
         // AXI Stream Write Interface

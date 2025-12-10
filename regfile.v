@@ -52,11 +52,12 @@ module regfile #(
     input                           S_AXI_RREADY,
 
     // NFC control signals output
-    output [47:0]                   nfc_lba,
-    output [23:0]                   nfc_len,
-    output [15:0]                   nfc_opcode,
-    output                          nfc_valid,
+(* MARK_DEBUG="true" *)     output [47:0]                   nfc_lba,
+(* MARK_DEBUG="true" *)     output [23:0]                   nfc_len,
+(* MARK_DEBUG="true" *)     output [15:0]                   nfc_opcode,
+(* MARK_DEBUG="true" *)     output                          nfc_valid,
 
+    input                         req_fifo_almost_full,
     input [7:0]                   o_sr_0,
     input [1:0]                   o_status_0
 );
@@ -65,12 +66,18 @@ module regfile #(
 // AXI-lite basic signals
 ////////////////////////////////////////////////////////////////////////////////
 
+wire [31:0] reg_status;
+
 reg axi_awready, axi_wready;
 reg axi_bvalid;
 reg axi_arready, axi_rvalid;
 reg [1:0] axi_rresp, axi_bresp;
 reg [AXI_ADDR_WIDTH-1:0] axi_awaddr, axi_araddr;
 reg [AXI_DATA_WIDTH-1:0] axi_rdata;
+
+reg req_fifo_almost_full_r;
+reg [1:0] top_status;
+reg [7:0] top_sr_r;
 
 assign S_AXI_AWREADY = axi_awready;
 assign S_AXI_WREADY  = axi_wready;
@@ -197,6 +204,24 @@ always @(posedge S_AXI_ACLK) begin
     end
 end
 
+always @(posedge S_AXI_ACLK or negedge S_AXI_ARESETN) begin
+    if (!S_AXI_ARESETN) begin
+        top_status <= 0;
+        top_sr_r   <= 0;
+        req_fifo_almost_full_r <=0;
+    end else begin
+        top_status <= o_status_0;
+        top_sr_r   <= o_sr_0;
+        req_fifo_almost_full_r <= req_fifo_almost_full;
+    end
+end
+
+
+assign reg_status = {21'd0, top_status, top_sr_r, req_fifo_almost_full_r}; // [31:11]=0, [10:9]=top_status, [8:1]=top_sr_r, [0]=req_fifo_almost_full_r
+
+
+
+
 // Register read
 always @(*) begin
     case (axi_araddr[4:2])
@@ -205,10 +230,13 @@ always @(*) begin
         3'h2: axi_rdata = slv_reg[2];
         3'h3: axi_rdata = slv_reg[3];
         3'h4: axi_rdata = slv_reg[4];
-        3'h5: axi_rdata = slv_reg[5];
+        3'h5: axi_rdata = reg_status;
         default: axi_rdata = 32'hDEAD_BEEF;
     endcase
 end
+
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // NFC output register explanation (recommended register definition)
@@ -224,14 +252,6 @@ assign nfc_opcode = slv_reg[0][15:0];
 assign nfc_len = slv_reg[1][23:0]; 
 assign nfc_lba = {slv_reg[3][15:0], slv_reg[2][31:0]};
 
-
-always @(posedge S_AXI_ACLK) begin
-    if(~S_AXI_ARESETN) begin
-        slv_reg[5][9:0] <= 10'd0;
-    end else begin
-        slv_reg[5][9:0] <= {o_status_0, o_sr_0};
-    end
-end
 
 
 // nfc_valid pulse: write reg3 bit0 = 1 raise 1 cycle
