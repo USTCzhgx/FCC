@@ -360,9 +360,9 @@ if(rst) begin
     isfirst <= 1'b1;
     dacnt   <= 2'b0;
 end else if(i_cmd_valid &&
-            ((i_cmd[15:0] == 16'h3000) || // read
-             (i_cmd[7:0]  == 8'h60)   || // erase
-             (i_cmd[7:0]  == 8'h80)))   // program
+            ((i_cmd[7:0] == 16'h00) || // read
+             (i_cmd[15:8]  == 8'hD0)   || // erase
+             (i_cmd[15:8]  == 8'h10)))   // program
 begin
     // First qualifying command keeps isfirst asserted; second clears it then resets counter
     if(isfirst) begin

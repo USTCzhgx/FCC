@@ -184,7 +184,7 @@ if(rst) begin
 end else begin
     case(state)
         IDLE: begin
-            if(i_cmd_valid && iswfirst && i_cmd[7:0]==8'h80) begin
+            if(i_cmd_valid && iswfirst && (i_cmd[7:0]==8'h80||i_cmd[7:0]==8'h85)) begin
                 state <= CMD0;
             end
             else if(i_cmd_valid) begin
@@ -441,7 +441,7 @@ end
 always@(posedge clk or posedge rst)
 if(rst) begin
     o_dq <= 32'h0;
-end else if(state == CMD0 && i_cmd[7:0]==8'h80)begin
+end else if(state == CMD0)begin
     o_dq <= {4{8'hDA}};
 end else if(state == CMD1)begin
     o_dq <= {4{i_cmd[7:0]}};

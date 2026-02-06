@@ -2,13 +2,7 @@
 `include "nfc_param.vh"
 /* 
 2025.11.14 SCMI ZGX 
-保留基本的 3000 读操作。 
-主要简化： 
-移除的功能： 列读（E005） 多平面读（3200） 缓存读（31, 3F, E006） 
-相关输入：i_col_num, i_col_addr_len 
-简化状态机： 仅保留 IDLE、READ、WAIT 三个状态 
-移除 FIRST_TWO、COLUMN、CRCE_ONE、CRCE_TWO、MPR、CACHE_LAST 只使用 3000 命令： 
-所有读操作使用 16'h3000 支持连续多页读取，每次递增一页地址 
+
 */
 module schedule_read(
     input                     clk,
@@ -18,7 +12,7 @@ module schedule_read(
     input  [15 : 0]           i_rcmd_id,
     input  [47 : 0]           i_raddr,    // LBA
     input  [23 : 0]           i_rlen,     // total read length in bytes
-    
+    input  [15 : 0]           i_rcmd,
     input                     i_page_buf_ready,
     input                     i_page_cmd_ready,
 
@@ -32,8 +26,9 @@ module schedule_read(
 
 // Simple read FSM
 localparam
-    IDLE = 2'b01,
-    READ = 2'b10,
+    IDLE = 2'b00,
+    READ = 2'b01,
+    CORD = 2'b10,
     WAIT = 2'b11;
 
 reg  [1:0]  state;
@@ -68,11 +63,13 @@ end else begin
         IDLE: begin
             o_page_cmd_valid <= 1'b0;
 
-            if (i_cmd_valid) begin
+            if (i_cmd_valid && i_rcmd[15:8] == 8'h30) begin
                 read_addr  <= i_raddr;
                 remain_len <= i_rlen;
                 state      <= READ;
             end
+            else if (i_cmd_valid && i_rcmd[15:8] == 8'h35) 
+                state <= CORD;
         end
 
         READ: begin
@@ -107,6 +104,18 @@ end else begin
                 // go to WAIT
                 state <= WAIT;
             end
+        end
+
+        CORD: begin
+            if(i_page_cmd_ready) begin
+                state            <= WAIT;
+                o_page_cmd_valid <= 1'b1;
+                o_page_cmd       <= 16'h3500;
+                o_page_cmd_last  <= 1'b1;
+                o_page_cmd_id    <= i_rcmd_id;
+                o_page_addr      <= i_raddr;
+                o_page_cmd_param <= {16'h0, 12'h800, 3'h6, 1'b1};
+            end        
         end
 
         WAIT: begin

@@ -155,7 +155,7 @@ if(rst) begin
 end else begin
     case(state)
         IDLE: begin
-            if(i_cmd_valid && isrfirst && i_cmd[15:0]==16'h3000) begin
+            if(i_cmd_valid && isrfirst && (i_cmd[15:0]==16'h3000||i_cmd[15:0]==16'h3500)) begin
                 state <= CMD0;
             end
             else if(i_cmd_valid) begin

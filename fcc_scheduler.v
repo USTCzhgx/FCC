@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 /*
 2025.11.17 SCMI ZGX 
-ĞŞ¸ÄÁËµØÖ·Ïà¹ØÂß¼­
-ÏÖÔÚÊÊÅäÁËÒÑÓĞµÄĞ¾Æ¬PA0ÔÚrow addrµÄµÚ12Î»
-¿ÉÒÔ½øĞĞÕıÈ·µÄ¿éµØÖ·µİÔöÂß¼­
+ï¿½Ş¸ï¿½ï¿½Ëµï¿½Ö·ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½Ğ¾Æ¬PA0ï¿½ï¿½row addrï¿½Äµï¿½12Î»
+ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½Ä¿ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
 */
 //// ** WAY Level ** /////
 // i_cmd[15:0]
@@ -186,7 +186,7 @@ schedule_read schedule_read(
     .i_rcmd_id        (i_cmd_id        ),
     .i_raddr          (i_addr          ),
     .i_rlen           (i_len           ),
-
+    .i_rcmd           (i_cmd           ),
     
     .i_page_buf_ready (i_rpage_buf_ready),
     .i_page_cmd_ready (i_rpage_cmd_ready), 
@@ -195,11 +195,11 @@ schedule_read schedule_read(
     .o_page_cmd_last  (o_rpage_cmd_last ), 
     .o_page_cmd_id    (o_rpage_cmd_id   ),
     .o_page_addr      (o_rpage_addr     ),
-    .o_page_cmd_param (o_rpage_cmd_param)
+    .o_page_cmd_param (o_rpage_cmd_param) 
 );
 
 
-assign i_wcmd_valid = i_cmd_valid & (i_cmd[7:0] == 8'h80);  
+assign i_wcmd_valid = i_cmd_valid & ((i_cmd[7:0] == 8'h80) ||(i_cmd[7:0] == 8'h85) );  
 assign i_wpage_cmd_ready = i_page_cmd_ready;
 
 schedule_prog schedule_prog(
@@ -210,6 +210,7 @@ schedule_prog schedule_prog(
     .i_wcmd_id        (i_cmd_id        ),
     .i_waddr          (i_addr          ),
     .i_wlen           (i_len           ),
+    .i_wcmd           (i_cmd           ),
 //    .i_col_num        (i_col_num       ), // additional read column number
 //    .i_col_addr_len   (i_col_addr_len  ), // additional read column address and length
     

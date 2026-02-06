@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 /*
 2025.11.13 SCMI ZGX 
-删除了所有res模块
-删除了resfifo
+删锟斤拷锟斤拷锟斤拷锟斤拷res模锟斤拷
+删锟斤拷锟斤拷resfifo
 */
 
 module fcc_wrapper#(
@@ -135,13 +135,13 @@ end else begin
         end
         
         WAIT: begin
-            if(~i_cmd_ready) begin  // 等待i_cmd_ready变为低
+            if(~i_cmd_ready) begin  // 锟饺达拷i_cmd_ready锟斤拷为锟斤拷
                 req_state   <= IDLE;
                 o_cmd_valid <= 1'b0;
                 cnt         <= 8'h0;
             end else if(cnt < 8'h8) begin
                 req_state   <= WAIT;
-                o_cmd_valid <= 1'b1;  // 保持cmd_valid为高，直到i_cmd_ready响应
+                o_cmd_valid <= 1'b1;  // 锟斤拷锟斤拷cmd_valid为锟竭ｏ拷直锟斤拷i_cmd_ready锟斤拷应
                 cnt         <= cnt + 8'h1;
             end else begin
                 req_state   <= IDLE;
@@ -196,7 +196,7 @@ data_fifo_rd data_fifo_rd(
 );    
    
 
-// 在时钟域中添加计数器
+// 锟斤拷时锟斤拷锟斤拷锟斤拷锟斤拷锟接硷拷锟斤拷锟斤拷
 always @(posedge nand_usr_clk or negedge nand_usr_rstn)
 if(~nand_usr_rstn) begin
     debug_wr_cnt <= 32'h0;

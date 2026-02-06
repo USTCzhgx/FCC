@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 /*
 2025.11.14 SCMI ZGX 
-±£Áô 1080 »ù±¾Ð´²Ù×÷¡£
-Ö÷ÒªÐÞ¸Ä£º
-É¾³ýÁËÁÐ²Ù×÷Ïà¹ØµÄÊäÈë£ºi_col_num ºÍ i_col_addr_len
-É¾³ýÁËËùÓÐ²»ÐèÒªµÄ×´Ì¬£ºCOLUMN¡¢COL_LAST¡¢MPP_ONE¡¢MPP_TWO
-¼ò»¯×´Ì¬»úÎªÈý¸ö×´Ì¬£ºIDLE¡¢PROG¡¢WAIT
-É¾³ýÁËËùÓÐ²»ÐèÒªµÄ¼Ä´æÆ÷ºÍÐÅºÅ£¨Èç remain_col_num¡¢right_shift¡¢col_addr_len¡¢row_addr µÈ£©
-¼ò»¯ÁË PROG ×´Ì¬£¬Ö»Ö´ÐÐ 1080 Ð´²Ù×÷
-¼ò»¯ÁË IDLE ×´Ì¬£¬Ö»´¦Àí»ù±¾Ð´ÃüÁî
+ï¿½ï¿½ï¿½ï¿½ 1080 ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½Òªï¿½Þ¸Ä£ï¿½
+É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ë£ºi_col_num ï¿½ï¿½ i_col_addr_len
+É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½Òªï¿½ï¿½×´Ì¬ï¿½ï¿½COLUMNï¿½ï¿½COL_LASTï¿½ï¿½MPP_ONEï¿½ï¿½MPP_TWO
+ï¿½ï¿½×´Ì¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½IDLEï¿½ï¿½PROGï¿½ï¿½WAIT
+É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½Òªï¿½Ä¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅ£ï¿½ï¿½ï¿½ remain_col_numï¿½ï¿½right_shiftï¿½ï¿½col_addr_lenï¿½ï¿½row_addr ï¿½È£ï¿½
+ï¿½ï¿½ï¿½ï¿½ PROG ×´Ì¬ï¿½ï¿½Ö»Ö´ï¿½ï¿½ 1080 Ð´ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ IDLE ×´Ì¬ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½
 */
 `include "nfc_param.vh"
 
@@ -20,7 +20,7 @@ module schedule_prog(
     input  [15 : 0]           i_wcmd_id,
     input  [47 : 0]           i_waddr, // LBA, Plane address at [16]
     input  [23 : 0]           i_wlen,
-    
+    input  [15 : 0]           i_wcmd,
     input  [23 : 0]           i_wdata_avail, // availiable (bufferred) data number
     
     input                     i_page_cmd_ready,
@@ -33,8 +33,9 @@ module schedule_prog(
 );
 
 localparam
-    IDLE     = 2'b01,   
-    PROG     = 2'b10,
+    IDLE     = 2'b00,   
+    PROG     = 2'b01,
+    COPR     = 2'b10,
     WAIT     = 2'b11;
     
 reg  [ 1:0] state;
@@ -56,8 +57,11 @@ end else begin
     case(state)
         IDLE: begin
             o_page_cmd_valid <= 1'b0;
-            if(i_cmd_valid & i_page_cmd_ready) begin
-                state <= PROG;
+            if(i_cmd_valid & i_page_cmd_ready & (i_wcmd[7:0]==8'h80)) begin
+                state <= PROG; 
+            end
+            else if (i_cmd_valid & i_page_cmd_ready & (i_wcmd[7:0]==8'h85)) begin
+                state <= COPR;
             end
         end
         PROG: begin
@@ -72,6 +76,19 @@ end else begin
                 o_page_cmd_param <= {i_wlen[15:0], 12'h800, 3'h6, 1'b1};
             end        
         end
+        COPR: begin
+            if(i_page_cmd_ready) begin
+                state            <= WAIT;
+                nxt_state        <= IDLE;
+                o_page_cmd_valid <= 1'b1;
+                o_page_cmd       <= 16'h1085;
+                o_page_cmd_last  <= 1'b1;
+                o_page_cmd_id    <= i_wcmd_id;
+                o_page_addr      <= i_waddr;
+                o_page_cmd_param <= {16'h0, 12'h800, 3'h6, 1'b1};
+            end        
+        end
+
         WAIT: begin
             o_page_cmd_valid <= 1'b0;
             if(~(i_page_cmd_ready | o_page_cmd_valid)) begin

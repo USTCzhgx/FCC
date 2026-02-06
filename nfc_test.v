@@ -79,7 +79,15 @@ end else begin
                 state       <= REQ;
                 o_req_valid <= 1'h1;
                 o_req_data  <= {64'h0, i_len[23:0], i_lba[47:0], cmd_id, i_opc};
+            end else if(i_valid & (i_opc == 16'h1085)) begin
+                state      <= REQ;
+                o_req_valid <= 1'h1;
+                o_req_data  <= {64'h0, i_len[23:0], i_lba[47:0], cmd_id, i_opc};
             end else if(i_valid & (i_opc == 16'h3000)) begin
+                state      <= REQ;
+                o_req_valid <= 1'h1;
+                o_req_data  <= {64'h0, i_len[23:0], i_lba[47:0], cmd_id, i_opc};
+            end else if(i_valid & (i_opc == 16'h3500)) begin
                 state      <= REQ;
                 o_req_valid <= 1'h1;
                 o_req_data  <= {64'h0, i_len[23:0], i_lba[47:0], cmd_id, i_opc};
